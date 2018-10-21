@@ -1,61 +1,42 @@
-NAME = libftfdf.a
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: cjumelin <marvin@42.fr>                    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2016/11/10 21:14:31 by cjumelin          #+#    #+#              #
+#    Updated: 2016/12/13 02:53:21 by smoreno          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-HEADER = libftfdf.h
+NAME = fillit
 
-SRC = parssing.c \
-fdf.c \
-iso_projection.c \
+SRC = fdf.c \
 bresenham.c \
 event_hook.c \
-ft_virgule.c
+ft_virgule.c \
+iso_projection.c \
+parssing.c
 
 OBJ = $(SRC:.c=.o)
 
 FLAG = -Wall -Werror -Wextra
 
-MLX = -g -I -L/usr/local/lib/ -I/usr/local/include -lmlx -framework OpenGL -framework AppKit
-
-FS = -g -fsanitize=address
-
 all : $(NAME)
 
-mall : memory
+$(NAME): $(OBJ)
+	make -C ./libft/.
+	gcc $(FLAG) $(OBJ) -L ./libft -lft -L ./minilibx_macos -l mlx -framework OpenGL -framework AppKit -o $(NAME)
 
-memory :
-	@gcc $(FS) -c $(FLAG) $(SRC)
-	@ar rc $(NAME) $(OBJ)
-	@ranlib $(NAME)
-
-all_exe :
-	@gcc -c $(FLAG) $(MLX) $(SRC)
-	@ar rc $(NAME) $(OBJ)
-	@ranlib $(NAME)
-	@gcc $(FLAG) $(MLX) -L . -lftfdf && ./a.out
-
-fall_exe :
-	@gcc $(FS) $(FLAG) $(MLX) $(SRC)
-	@ar rc $(NAME) $(OBJ)
-	@ranlib $(NAME)
-	@gcc $(FLAG) $(FS) $(MLX) -L . -lftfdf && ./a.out
-
-$(NAME):
-	@gcc -c $(FLAG) $(SRC)
-	@ar rc $(NAME) $(OBJ)
-	@ranlib $(NAME)
-	
-	@echo "Done."
-
+%.o: %.c
+	gcc $(FLAGS) -c $<
 clean :
-	@rm -f $(OBJ)
-	@echo "Done."
+	make clean -C ./libft/.
+	rm -f $(OBJ)
 
 fclean : clean
-	@rm -f $(NAME)
-	@echo "Done."
+	make fclean -C ./libft/.
+	rm -f $(NAME)
 
 re : fclean all
-
-fre : fclean mall
-
-ere : fclean all_exe
-fere : fclean fall_exe
